@@ -12,17 +12,28 @@ export default class Generator extends React.Component {
       movieId: 1
     }
     this.addToGenerator = this.addToGenerator.bind(this)
+    this.deleteFromGenerator = this.deleteFromGenerator.bind(this)
   }
 
   async addToGenerator(){
     const addedMovie = (await axios.get(`api/movies/${this.state.movieId}`)).data
     await axios.post(`/api/generators/${addedMovie.id}`, {movie: addedMovie})
     this.setState({
-      ...this.state,
+      
       generator: [...this.state.generator, addedMovie],
       movieId: this.state.movieId + 1
     })
   }
+
+  async deleteFromGenerator(id){
+    await axios.delete(`/api/generators/${id}`)
+    this.setState({
+      generator: this.state.generator.filter(item => {
+          return item.id !== id
+      })
+  })
+  }
+
   componentDidUpdate(){}
 
   async componentDidMount(){
@@ -36,8 +47,21 @@ export default class Generator extends React.Component {
     return (
       <div>
         <button onClick={this.addToGenerator}>Generate Random Movie</button>
-        <div>
-          
+        <div className='generator'>
+          {
+            generator.map(item =>{
+              return(
+                <div key={item.id}>
+                  <button onClick={this.deleteFromGenerator.bind(null, item.id)}>x</button>
+                  
+                    {item.name }({item.rating})
+                  
+                  <button>-</button>
+                  <button>+</button>
+                </div>
+              )
+            })
+          }
         </div>
       </div>
     )

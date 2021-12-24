@@ -59,4 +59,10 @@ router.post('/generators/:id', async(req, res, next)=>{
   }
 })
 
+router.delete('/generators/:id', async(req, res, next) => {
+  const generatorToDelete = await Generator.findByPk(req.params.id)
+  generatorToDelete.destroy()
+  res.sendStatus(204)
+})
+
 module.exports = router
