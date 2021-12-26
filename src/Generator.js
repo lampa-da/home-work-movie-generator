@@ -8,56 +8,79 @@ export default class Generator extends React.Component {
     super()
     this.state ={
       movies: [],
-      generator: [],
-      movieId: 1
     }
     this.addToGenerator = this.addToGenerator.bind(this)
     this.deleteFromGenerator = this.deleteFromGenerator.bind(this)
+    this.changeRating = this.changeRating.bind(this)
+    // this.increaseRating = this.increaseRating.bind(this)
+  }
+
+  sortByName(a, b){
+    return a.name.localeCompare(b.name)
+  }
+  sortByRating(a, b){
+    return b.rating - a.rating
   }
 
   async addToGenerator(){
-    const addedMovie = (await axios.get(`api/movies/${this.state.movieId}`)).data
-    await axios.post(`/api/generators/${addedMovie.id}`, {movie: addedMovie})
+    const addedMovie = (await axios.post(`/api/movies/random`)).data
     this.setState({
-      
-      generator: [...this.state.generator, addedMovie],
-      movieId: this.state.movieId + 1
+      movies: [...this.state.movies, addedMovie]
+      .sort(this.sortByName)
+      .sort(this.sortByRating)
     })
   }
 
   async deleteFromGenerator(id){
-    await axios.delete(`/api/generators/${id}`)
+    await axios.delete(`/api/movies/${id}`)
     this.setState({
-      generator: this.state.generator.filter(item => {
-          return item.id !== id
+      movies: this.state.movies.filter(movie => {
+          return movie.id !== id
       })
-  })
+    })
+  }
+
+  async changeRating(movie, method){
+    let newRating = movie.rating
+    if(method === 'decrease'){
+      newRating = movie.rating - 1
+    }
+    else if(method === 'increase'){
+      newRating = movie.rating + 1
+    }
+    const updatedMovie = (await axios.put(`/api/movies/${movie.id}`, {rating: newRating})).data
+    const movies = await axios.get(`api/movies`).data
+    this.setState({movies: this.state.movies
+      .map(mov => (mov.id === updatedMovie.id ? updatedMovie : mov))
+      .sort(this.sortByName)
+      .sort(this.sortByRating)
+    })
   }
 
   componentDidUpdate(){}
 
   async componentDidMount(){
     const {data: movies} = await axios.get('api/movies')
-    this.setState({movies: movies})
+    this.setState({movies: movies
+      .sort(this.sortByName)
+      .sort(this.sortByRating)
+    })
   }
   render(){
-    const {movies, generator} = this.state
+    const {movies} = this.state
     console.log('movies', movies)
-    console.log('generator', generator)
     return (
       <div>
         <button onClick={this.addToGenerator}>Generate Random Movie</button>
         <div className='generator'>
           {
-            generator.map(item =>{
+            movies.map(movie =>{
               return(
-                <div key={item.id}>
-                  <button onClick={this.deleteFromGenerator.bind(null, item.id)}>x</button>
-                  
-                    {item.name }({item.rating})
-                  
-                  <button>-</button>
-                  <button>+</button>
+                <div key={movie.id}>
+                  <button onClick={this.deleteFromGenerator.bind(null, movie.id)}>x</button>
+                  {movie.name }({movie.rating})
+                  <button onClick={this.changeRating.bind(null, movie, 'decrease')}>-</button>
+                  <button onClick={this.changeRating.bind(null, movie, 'increase')}>+</button>
                 </div>
               )
             })

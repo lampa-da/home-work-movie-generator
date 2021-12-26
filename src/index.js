@@ -7,7 +7,7 @@ class App extends React.Component {
   render(){
     return (
       <div id='container'>
-        <div id='navbar'>Home</div>
+        <div id='navbar'>Random Movie Generator</div>
         <Generator />
       </div>
     )

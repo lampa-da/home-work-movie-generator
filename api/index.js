@@ -1,6 +1,6 @@
 var express = require('express');
 const router = express.Router();
-const { models:{Movie, Generator} } =require('../db')
+const { models:{ Movie } } =require('../db')
 
 
 router.get('/movies', async(req, res, next)=>{
@@ -20,48 +20,29 @@ router.get('/movies/:id', async(req, res, next)=>{
     next(ex)
   }
 })
-
-router.get('/generators', async(req, res, next)=>{
+router.put('/movies/:id', async(req, res, next)=>{
   try{
-    res.send(await Generator.findAll( {
-      include: [Movie]
-    }))
+    let movie = await Movie.findByPk(req.params.id);
+    await movie.update(req.body);
+    res.send(movie);
   }
   catch(ex){
     next(ex)
   }
 })
 
-router.get('/generators/:id', async(req, res, next)=>{
+router.post('/movies/random', async(req, res, next)=>{
   try{
-      res.send(await Generator.findByPk(req.params.id, {
-        include: [Movie]
-      }))
+    res.send(await Movie.createRandom())
   }
   catch(ex){
     next(ex)
   }
 })
 
-router.post('/generators/:id', async(req, res, next)=>{
-  try{
-    let generators = await Generator.create(req.params.id, {
-      include: [Movie]
-    })
-    let movie = await Movie.findByPk(req.params.id)
-    console.log(movie)
-    generators.addMovies([movie.dataValues.id])
-    generators = await Generator.findByPk(req.params.id,{ include: [Movie]})
-    res.send(generators)
-  }
-  catch(ex){
-    next(ex)
-  }
-})
-
-router.delete('/generators/:id', async(req, res, next) => {
-  const generatorToDelete = await Generator.findByPk(req.params.id)
-  generatorToDelete.destroy()
+router.delete('/movies/:id', async(req, res, next) => {
+  const movieToDelete = await Movie.findByPk(req.params.id)
+  movieToDelete.destroy()
   res.sendStatus(204)
 })
 

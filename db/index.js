@@ -3,7 +3,7 @@ const {STRING, INTEGER} = Sequelize
 const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/movie_db')
 const faker = require('faker')
 
-let movieData = new Array(50).fill('').map(_ => faker.company.catchPhrase())
+// let movieData = new Array(3).fill('').map(_ => faker.company.catchPhrase())
 
 const Movie = conn.define('movie', {
   name: {
@@ -19,23 +19,26 @@ const Movie = conn.define('movie', {
   }
 })
 
-const Generator = conn.define('generator', {
-})
+Movie.createRandom = function () {
+  return Movie.create({ name: faker.company.catchPhrase()});
+};
 
-Generator.hasMany(Movie)
+
+
+
 
 const syncAndSeed = async()=>{
   await conn.sync({force: true})
-  const movies = await Promise.all(
-    movieData.map((name)=> Movie.create({name: name })),
-    )
-    console.log(movies)
+  // await Promise.all(
+  //   movieData.map((name)=> Movie.create({name: name })))
+  //   console.log(`
+  //     Seeding successful!
+  //   `);
 }
 
 module.exports ={
   models: {
-    Movie,
-    Generator
+    Movie
   },
   conn,
   syncAndSeed,
