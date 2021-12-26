@@ -22,6 +22,10 @@ export default class Generator extends React.Component {
     return b.rating - a.rating
   }
 
+  calcAvarageRating(movies){
+    return movies.length === 0 ? 0 : (movies.reduce((sum, a) => sum + a.rating, 0)/(movies.length)).toFixed(1)
+  }
+
   async addToGenerator(){
     const addedMovie = (await axios.post(`/api/movies/random`)).data
     this.setState({
@@ -69,6 +73,7 @@ export default class Generator extends React.Component {
     console.log('movies', movies)
     return (
       <div>
+        <div>The avarage rating is {this.calcAvarageRating(movies)}!</div>
         <button onClick={this.addToGenerator}>Generate Random Movie</button>
         <div className='generator'>
           {
