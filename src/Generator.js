@@ -7,7 +7,7 @@ export default class Generator extends React.Component {
   constructor(){
     super()
     this.state ={
-      movies: [],
+      movies: []
     }
     this.addToGenerator = this.addToGenerator.bind(this)
     this.deleteFromGenerator = this.deleteFromGenerator.bind(this)
@@ -42,12 +42,10 @@ export default class Generator extends React.Component {
 
   async changeRating(movie, method){
     let newRating = movie.rating
-    if(method === 'decrease'){
+    method === 'decrease'?
       newRating = movie.rating - 1
-    }
-    else if(method === 'increase'){
+      :
       newRating = movie.rating + 1
-    }
     const updatedMovie = (await axios.put(`/api/movies/${movie.id}`, {rating: newRating})).data
     const movies = await axios.get(`api/movies`).data
     this.setState({movies: this.state.movies
@@ -79,8 +77,8 @@ export default class Generator extends React.Component {
                 <div key={movie.id}>
                   <button onClick={this.deleteFromGenerator.bind(null, movie.id)}>x</button>
                   {movie.name }({movie.rating})
-                  <button onClick={this.changeRating.bind(null, movie, 'decrease')}>-</button>
-                  <button onClick={this.changeRating.bind(null, movie, 'increase')}>+</button>
+                  <button disabled={ movie.rating === 1 ? true : false } onClick={this.changeRating.bind(null, movie, 'decrease')} >-</button>
+                  <button disabled={ movie.rating === 5 ? true : false } onClick={this.changeRating.bind(null, movie, 'increase')}>+</button>
                 </div>
               )
             })
