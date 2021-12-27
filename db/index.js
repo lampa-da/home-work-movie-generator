@@ -23,10 +23,6 @@ Movie.createRandom = function () {
   return Movie.create({ name: faker.company.catchPhrase()});
 };
 
-
-
-
-
 const syncAndSeed = async()=>{
   await conn.sync({force: true})
   // await Promise.all(

@@ -12,7 +12,6 @@ export default class Generator extends React.Component {
     this.addToGenerator = this.addToGenerator.bind(this)
     this.deleteFromGenerator = this.deleteFromGenerator.bind(this)
     this.changeRating = this.changeRating.bind(this)
-    // this.increaseRating = this.increaseRating.bind(this)
   }
 
   sortByName(a, b){
