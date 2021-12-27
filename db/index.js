@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 const {STRING, INTEGER} = Sequelize
 const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/movie_db')
 const faker = require('faker')
-
+console.log(process.env.DATABASE_URL)
 // let movieData = new Array(3).fill('').map(_ => faker.company.catchPhrase())
 
 const Movie = conn.define('movie', {
