@@ -7,7 +7,7 @@ class App extends React.Component {
   render(){
     return (
       <div id='container'>
-        <div>Random Movie Generator</div>
+        <h1>Random Movie Generator</h1>
         <Generator />
       </div>
     )
